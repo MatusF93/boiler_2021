@@ -1,0 +1,182 @@
+%----------------------------------------------------------------%
+%   MAIN TEX FILE    %
+%----------------------------------------------------------------%
+\documentclass[11pt, a4paper, fleqn]{article}
+
+%----------------------------------------------------------------%
+%   Include Packages %
+%----------------------------------------------------------------%
+\input{../tex_formatting/pck}
+\usepackage{mcode}
+
+\newcommand{\GEOMETRY}{bottom=2.5cm, left=2.5cm, right=2.5cm, top=3cm}
+\usepackage[\GEOMETRY]{geometry}
+\usepackage{soul}
+
+% bold and italic
+\def\ve#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+{\mbox{\boldmath$\textstyle#1$}}
+{\mbox{\boldmath$\scriptstyle#1$}}
+{\mbox{\boldmath$\scriptscriptstyle#1$}}}
+
+%----------------------------------------------------------------%
+%   Include Custom TeX Commands   %
+%----------------------------------------------------------------%
+\input{../tex_formatting/cmd}
+
+%----------------------------------------------------------------%
+%	TikZ Graphics    %
+%----------------------------------------------------------------%
+\input{../tex_formatting/tikz_pck_tar}
+%----------------------------------------------------------------%
+%   Include Formatting Headers, Numbering, etc.     %
+%----------------------------------------------------------------%
+\input{../tex_formatting/frmt}
+\lhead{Once-Through Boiler-Turbine}
+\newcommand{\exercise}{OTBT}
+\rhead{\exercise}
+
+%----------------------------------------------------------------%
+%   HYPERLINKS  %
+%   http://en.wikibooks.org/wiki/LaTeX/Hyperlinks   %
+%----------------------------------------------------------------%
+\usepackage[bookmarks=true, colorlinks=true, linkcolor=blue, 
+pdfstartview={FitV}, citecolor=dark_green, linktoc=all, 
+urlcolor = blue]{hyperref}
+
+%----------------------------------------------------------------%
+%   Other Mandatory Commands      %
+%----------------------------------------------------------------%
+\author{}
+\title{PTM \exercise}
+\date{\today}
+\begin{document}
+
+\begin{center}
+	{\Large \bfseries \exercise}\\
+	\vspace{6pt}
+\end{center}
+
+\begin{enumerate}
+
+\item \textbf{Nonlinear Mathematical Model}
+	\begin{align*}
+	\dot{x}_1 &= - \frac{1}{c_0}x_1 + \frac{e^{-\tau s}}{c_0}u_1\\
+	\dot{x}_2 &= \left( \frac{h_{fw} - d_{11}}{c_{11}} \right) (u_2-u_4-u_5) + \left( \frac{d_{11} - d_5}{c_{11}} \right) f_1(x_2-g(x_2), h_5)u_3 + k_{11}\frac{x_1}{c_{11}}\\
+	\dot{x}_3 &= \left( \frac{h_{fw} - d_{12}}{c_{12}} \right) (u_2-u_4-u_5) + \left( \frac{d_{12} - d_5}{c_{12}} \right) f_1(x_2-g(x_2), h_5)u_3 + k_{11}\frac{x_1}{c_{12}}\\
+	\dot{x}_4 &=  \frac{D_3(h_4-x_4)}{c_2} + k_{12}\frac{x_1}{c_2}\\
+	\dot{x}_5 &= \left( \frac{h_2 - d_{21}}{c_{31}} \right)D_2 + \left( \frac{d_{31}-x_6}{c_{31}} \right)f_2(x_5,x_6)u_3 + k_{13}\frac{x_1}{c_{31}}\\
+	\dot{x}_6 &= \left( \frac{h_2 - d_{22}}{c_{32}} \right)D_2 + \left( \frac{d_{32}-x_6}{c_{32}} \right)f_2(x_5,x_6)u_3 + k_{13}\frac{x_1}{c_{32}}\\
+	\dot{x}_7 &= - \frac{x_7}{c_4} + \frac{k_2(x_6-h_{fw})f_2(x_5,x_6)u_3}{c_4}\\
+	y_1 &= x_5 \\
+	y_2 &= x_3 \\
+	y_3 &= x_7 \\
+	y_4 &= T_1(x_2,x_4)\\
+	y_5 &= T_2(x_5,x_6)
+	\end{align*}
+	where
+	\begin{align*}
+		h_5 &= lx_3\\
+		p_5 &= x_2 - g_1(x_2)\\
+		p_3 &= x_2 - g_2(x_2)\\
+		D_5 &= f_1(p_5,h_5)u_3\\
+		D_4 &= D_5 + u_4;\\
+		D_3 &= D_4\\
+		D_2 &= D_3 + u_5;\\
+		h_2 &= \frac{D_3h_3 + u_5h_{sw2}}{D_2}\\
+		h_4 &= \frac{D_5h_5 + u_4h_{sw1}}{D_4}		
+	\end{align*}
+
+ \item \textbf{Inputs, States \& Outputs}
+\begin{itemize}
+	\item \textit{Inputs}
+	\begin{equation*}
+		U = [u_1,u_2,u_3,u_4,u_5]^T = [u_B, D_{fw}, u_t, D_{sw1}, D_{sw2}]^T
+	\end{equation*}
+	\item \textit{States}
+	\begin{equation*}
+		X = [x_1,x_2,x_3,x_4,x_5,x_6,x_7]^T = [r_B, p_m,h_m,h_3,p_{st},h_{st},N_e]^T
+	\end{equation*}	
+	\item \textit{Outputs}
+	\begin{equation*}
+		Y = [y_1,y_2,y_3,y_4,y_5]^T = [p_{st},h_m,N_e,T_3,T_{st}]^T
+	\end{equation*}	
+\end{itemize}
+
+\newpage
+\item \textbf{Parameters \& Functions}
+\begin{itemize}
+	\item \textit{Static Parameters}
+	\begin{align*}
+		l &= -0.000016739 r_B^2 + 0.00294744 r_B + 0.973044\\
+		k_{11} &= -0.10233 r_B^2 - 30.144 r_B + 16277 \\
+		k_{12} &=  0.07672 r_B^2 - 12.66 r_B + 2225.945 \\
+		k_{13} &= -0.2143 r_B^2 + 43.31 r_B - 338.57\\
+		k_{2}  &= -1.5422*10^{-5}r_B^2 + 4.093*10^{-3}r_B + 0.33177
+ 	\end{align*}
+ 	\item \textit{Dynamic Parameters}
+ 	\begin{table}[h]
+ 		\centering
+ 		\begin{tabular}{c|c}
+ 			Parameter & Value \\ \hline
+ 			$\tau$ & 12 \\
+ 			$c_0$ & 152 \\
+ 			$c_{11}$ & 110475 \\
+ 			$c_{12}$ & 197128 \\
+ 			$c_{2}$ & 89912 \\
+ 			$c_{31}$ & 2667932 \\
+ 			$c_{32}$ & 44805 \\
+ 			$c_4$ & 10 \\
+ 			$d_{11}$ & 103 \\
+ 			$d_{12}$ & 2004 \\		
+ 			$d_{21}$ & 236 \\
+ 			$d_{22}$ & 3001			
+  		\end{tabular}
+ 	\end{table}
+ 	\item \textit{Functions}
+ 	\begin{align*}
+ 		g_1(p_m) &=  0.01784p_m^2 - 0.8p_m + 10.0919 \\
+ 		g_2(p_m) &= -0.04112p_m^2 + 1.867p_m - 15.018 \\
+ 		f_1(p_{st},h_{st}) &= \frac{91611p_{st}}{0.76h_{st}-592.95}\\
+ 		f_2(p_5,h_5) &= \frac{889857p_5}{6.29h_5 + 2862.86} \\
+ 		h_{fw}(r_B) &= 471.67r_B^{0.215}\\
+ 		h_{sw1}(r_B) &= 522.57r_B^{0.193}\\
+ 		h_{sw2}(r_B) &= 522.57r_B^{0.193}\\
+ 		T_1(p_5,h_5) &= \kappa_1 p_5^2 + \beta_1 p_5 + \gamma_1\\
+ 		T_2(p_{st},h_{st}) &= \kappa_2 p_{st}^2 + \beta_2 p_{st} + \gamma_2
+ 	\end{align*}	
+ 	where
+ 	\begin{align*}
+ 		\kappa_1(h_5) &= -1.292*10^{-7}h_5^2 + 0.0009804h_5 - 1.878\\
+ 		\beta_1(h_5)  &= 6.5093*10^{-6}h_5^2 - 0.0524h_5 + 108.138\\
+ 		\gamma_1(h_5) &= 1.8054*10^{-5}h_5^2 + 0.335h_5 - 887.064\\
+ 		\kappa_2(h_{st}) &= -1.15034*10^{-7}h_{st}^2 + 0.0008784h_{st} - 1.6941\\
+ 		\beta_2(h_{st})  &= 6.31422*10^{-6}h_{st}^2 - 0.0509h_{st} + 105.32\\
+ 		\gamma_2(h_{st}) &= 3.9667*10^{-6}h_{st}^2 + 0.4311h_{st} - 1050.743
+ 	\end{align*}
+\end{itemize} 
+
+\newpage
+ \item \textbf{Steady States}
+ \begin{table}[h]
+ 	\centering
+	\begin{tabular}{ccccc}
+		$u_B$ [\si{kgs^{-1}}] & $D_{fw}$ [\si{kgs^{-1}}] & $u_t$ [\si{\%}] & $D_{sw1}$ [\si{kgs^{-1}}] & $D_{sw2}$ [\si{kgs^{-1}}] \\
+		\textbf{$u_1$} & \textbf{$u_2$} & \textbf{$u_3$} & \textbf{$u_4$} & \textbf{$u_5$} \\
+		\hline
+		56.5 & 401.9 & 68.41 & 1.546 & 0.165 \\
+	\end{tabular}
+
+	\vspace{5pt}
+	
+	\begin{tabular}{ccccccc}
+		$r_B$ [\si{kgs^{-1}}] & $p_m$ [\si{MPa}] & $h_m$ [\si{kJkg^{-1}}] & $h_3$ [\si{kJkg^{-1}}] & $p_{st}$ [\si{MPa}] & $h_{st}$ [\si{kJkg^{-1}}] & $N_e$ [\si{MW}] \\
+		\textbf{$x_1$} & \textbf{$x_2$} & \textbf{$x_3$} & \textbf{$x_4$} & \textbf{$x_5$} & \textbf{$x_6$} & \textbf{$x_7$} \\
+		\hline
+		56.5 & 15.6 & 2834.7 & 3293.5 & 13.1 & 3486.5 & 496.5 \\
+	\end{tabular}
+ \end{table}
+
+\end{enumerate}
+
+\end{document}

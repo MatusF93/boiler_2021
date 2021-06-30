@@ -1,0 +1,141 @@
+\usepackage{etex}
+\usepackage{tikz}
+\usepackage{pgfkeys}
+
+\usepackage{calc}
+\usetikzlibrary{arrows}
+\usepgflibrary{arrows}
+\usetikzlibrary{positioning}
+\usetikzlibrary{intersections}
+\usetikzlibrary{shapes}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes,arrows,matrix}
+\usetikzlibrary{fit}
+%\usepackage[customcolors,norndcorners]{hf-tikz}
+
+% M. Klauco grid commands
+\newcommand{\rgrid}[2]{
+	% creates grid
+	\draw[step=.5cm, red, very thin] (0.001, 0.001) 
+		grid (#1 + 0.1, #2 + 0.1);
+	
+	% x-axis labeling
+	\foreach \xx in {0, 1, ..., #1}
+		\draw (\xx, -1pt) -- (\xx, 1pt) 
+			node[anchor = north] {\scriptsize $\xx$};
+		
+	% y-axis labeling
+	\foreach \yy in {0, 1, ..., #2}
+		\draw (-1pt, \yy cm) -- (1pt, \yy cm) 
+			node[anchor = east] {\scriptsize $\yy$};
+
+	% x/y-axis arrows
+	\draw[->, black, very thin] (0, 0) -- (#1 + 0.2, 0);
+	\draw[->, black, very thin] (0, 0) -- (0, #2 + 0.2);
+	
+	\node[anchor = center] (xlabel) 
+		at (#1 / 2, -0.4) {\scriptsize [cm]};
+	\node[anchor = center, rotate = 90] (ylabel) 
+		at (-0.4, #2 / 2) {\scriptsize [cm]};
+}
+
+\newcommand{\rgridc}[1]{
+	% creates grid
+	\draw[step=.5cm, red, very thin] (-#1 - 0.1, -#1 - 0.1) 
+		grid (#1 + 0.1, #1 + 0.1);
+	
+	% x-axis labeling
+	\foreach \xx in {-#1, ..., #1}
+		\draw (\xx, -1pt) -- (\xx, 1pt) 
+			node[anchor = north] {\tiny $\xx$};
+		
+	% y-axis labeling
+	\foreach \yy in {-#1, ..., #1}
+		\draw (-1pt, \yy cm) -- (1pt, \yy cm) 
+			node[anchor = east] {\tiny $\yy$};
+
+	% x/y-axis arrows
+	\draw[->, black, very thin] (-#1 - 0.1, 0) -- (#1 + 0.1, 0);
+	\draw[->, black, very thin] (0, -#1 - 0.1) -- (0, #1 + 0.1);
+	
+	% \node[anchor = center] (xlabel) 
+		% at (#1 / 2, -0.4) {\scriptsize [cm]};
+	% \node[anchor = center, rotate = 90] (ylabel) 
+		% at (-0.4, #2 / 2) {\scriptsize [cm]};
+}
+
+\newcommand{\ttr}[4]{
+	\pgfmathsetmacro\xA{#1 - 0.5*#3}
+	\pgfmathsetmacro\yA{#1 - 0.333*#4}
+	
+	\draw (#1, #1) circle (3pt);
+	% \draw (\xA, \yA) circle (2pt);
+	
+	\pgfmathsetmacro\xB{#1 + 0.5*#3}
+	\pgfmathsetmacro\yB{#1 - 0.333*#4}	
+	% \draw (\xB, \yB) circle (2pt);
+	
+	\pgfmathsetmacro\xC{#1}
+	\pgfmathsetmacro\yC{#1 + 0.666*#4}
+	% \draw (\xC, \yC) circle (2pt);
+	
+	\draw[color = red, fill = red] (\xA, \yA) -- (\xB, \yB) -- (\xC, \yC) -- (\xA, \yA);
+}
+
+\newcommand{\simpleTank}[5]{
+	\draw [line width = 0.75pt] (#1 - 1.5, #2 + 1.5) -- (#1 - 1.5, #2 - 1.5) -- (#1 + 1.5, #2 - 1.5) -- (#1 + 1.5, #2 + 1.5);
+	
+	\draw [line width = 0.75pt, -triangle 60] (#1 + 1.5, #2 - 1.4) -- (#1 + 2.5, #2 - 1.4) -- (#1 + 2.5, #2 - 3) node [anchor = south west] {#5};
+	
+	\draw [line width = 0.5pt, dashed] (#1 - 1.5, #2 + 1.25) -- (#1 + 1.5, #2 + 1.25);
+	
+	\coordinate (h0) at (#1 - 1, #2 - 1.5);
+	\coordinate (h1) at (#1 - 1, #2 + 1.25);
+	\draw[line width = 0.5pt, triangle 45-triangle 45] (h0) -- (h1);
+	\node at (#1 - 0.5, #2 - 0.125)  {#3} ;
+
+	\coordinate (vv) at (#1 + 2, #2 - 1.4);
+	\node (valve) at (vv) {};
+	\node [above = 0.05cm of valve] {#4};
+	\draw [fill = white] (vv) -- ++(-0.2, 0.1) -- ++(0, -0.2) -- (vv) -- ++( 0.2, 0.1) -- ++(0, -0.2) -- (vv);
+}
+
+\newcommand{\simpleTankI}[5]{
+	\draw [line width = 0.75pt] (#1 - 1.5, #2 + 1.5) -- (#1 - 1.5, #2 - 1.5) -- (#1 + 1.5, #2 - 1.5) -- (#1 + 1.5, #2 + 1.5);
+	
+	\draw [line width = 0.75pt, -triangle 60] (#1 + 1.5, #2 - 1.4) -- (#1 + 3.2, #2 - 1.4)  node (end) {} -- (#1 + 4, #2 - 1.4);
+	
+	\draw [line width = 0.5pt, dashed] (#1 - 1.5, #2 + 1.25) -- (#1 + 1.5, #2 + 1.25);
+	
+	\coordinate (h0) at (#1 - 1, #2 - 1.5);
+	\coordinate (h1) at (#1 - 1, #2 + 1.25);
+	\draw[line width = 0.5pt, triangle 45-triangle 45] (h0) -- (h1);
+	\node at (#1 - 0.5, #2 - 0.125)  {#3} ;
+
+	\coordinate (vv) at (#1 + 2, #2 - 1.4);
+	\node (valve) at (vv) {};
+	\node [above = 0.05cm of valve] {#4};
+	\node [above = 0.05cm of end] {#5};
+	\draw [fill = white] (vv) -- ++(-0.2, 0.1) -- ++(0, -0.2) -- (vv) -- ++( 0.2, 0.1) -- ++(0, -0.2) -- (vv);
+}
+
+\tikzset{
+    node style block/.style={anchor = center, rectangle, draw, minimum height = 30pt, minimum width = 60pt},
+    node style sum/.style={anchor = center, circle, draw, minimum height = 5pt, minimum width = 5pt}
+    % node style se/.style={anchor = east, rectangle},
+	% node style bs/.style={draw, color=ddark_seahorse, rectangle, fill = seahorse, minimum width=2.5cm, 
+				% minimum height=0.8cm, rounded corners}
+}
+
+% M. Klauco colors
+\definecolor{dark_red}{rgb}{0.5, 0.0, 0.0}
+\definecolor{dark_blue}{rgb}{0.0, 0.0, 0.6}
+\definecolor{light_blue}{rgb}{0.5, 0.5, 1.0}
+\definecolor{light_red}{rgb}{1.0, 0.5, 0.5}
+\definecolor{light_green}{rgb}{0.5, 1.0, 0.5}
+\definecolor{dark_green}{rgb}{0.0, 0.6, 0.0}
+\definecolor{ddark_green}{rgb}{0.0, 0.35, 0.0}
+\definecolor{ddark_blue}{rgb}{0.0, 0.0, 0.35}
+\definecolor{seahorse}{rgb}{0.839, 0.839, 0.937}
+\definecolor{dark_seahorse}{rgb}{0.739, 0.739, 0.837}
+\definecolor{ddark_seahorse}{rgb}{0.757, 0.757, 0.909}
